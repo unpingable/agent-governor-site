@@ -358,6 +358,160 @@
       margin: 0;
     }
 
+    /* -- Demo -- */
+    .demo {
+      margin-bottom: 3rem;
+    }
+
+    .demo-stage {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      overflow: hidden;
+    }
+
+    .demo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1rem;
+      background: var(--bg-subtle, var(--card-bg));
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .demo-header .demo-title {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--fg-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .demo-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .demo-controls button {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 0.25rem 0.65rem;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--fg-muted);
+      cursor: pointer;
+    }
+
+    .demo-controls button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .demo-controls button:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .demo-controls button:disabled:hover {
+      border-color: var(--border);
+      color: var(--fg-muted);
+    }
+
+    .demo-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 280px;
+    }
+
+    .demo-col {
+      padding: 1rem 1.25rem;
+    }
+
+    .demo-col + .demo-col {
+      border-left: 1px solid var(--card-border);
+    }
+
+    .demo-col-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--fg-faint);
+      margin-bottom: 0.75rem;
+    }
+
+    .demo-event {
+      margin-bottom: 0.75rem;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .demo-event.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .demo-event .ev-kind {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.15rem;
+    }
+
+    .demo-event .ev-kind.propose { color: var(--fg-muted); }
+    .demo-event .ev-kind.blocked { color: #b44; }
+    .demo-event .ev-kind.allowed { color: #4a7c4a; }
+    .demo-event .ev-kind.receipt { color: var(--accent); }
+    .demo-event .ev-kind.policy { color: #7a6c3a; }
+
+    @media (prefers-color-scheme: dark) {
+      .demo-event .ev-kind.blocked { color: #d66; }
+      .demo-event .ev-kind.allowed { color: #6daa6d; }
+      .demo-event .ev-kind.policy { color: #c4a84a; }
+    }
+
+    .demo-event .ev-body {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--fg-muted);
+    }
+
+    .demo-event .ev-detail {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--fg-faint);
+      margin-top: 0.2rem;
+      line-height: 1.4;
+    }
+
+    .demo-narration {
+      padding: 0.6rem 1rem;
+      border-top: 1px solid var(--card-border);
+      font-size: 0.82rem;
+      color: var(--fg-muted);
+      min-height: 2.5rem;
+      font-style: italic;
+    }
+
+    .demo-step-indicator {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--fg-faint);
+    }
+
+    @media (max-width: 768px) {
+      .demo-body {
+        grid-template-columns: 1fr;
+      }
+
+      .demo-col + .demo-col {
+        border-left: none;
+        border-top: 1px solid var(--card-border);
+      }
+    }
+
     /* -- Footer -- */
     .site-footer {
       margin-top: 3rem;
@@ -413,6 +567,7 @@
     <h1>Agent Governor</h1>
     <p class="tagline">A control and evidence layer for tool-using AI agents. Claims require evidence. Decisions produce receipts. Language is a proposal, not an authority.</p>
     <nav>
+      <a href="#demo">See the gate</a>
       <a href="#why">Why</a>
       <a href="#how">How it works</a>
       <a href="#ecosystem">Ecosystem</a>
@@ -431,6 +586,35 @@
         <p>Language is a proposal, not an authority.</p>
       </div>
       <p>The model can <em>claim</em> anything. It cannot <em>write</em> anything until evidence exists. Evidence must come from trusted collectors &mdash; test runners, linters, filesystem probes, git diffs &mdash; not from the agent itself.</p>
+    </section>
+
+    <!-- Demo -->
+    <section id="demo" class="demo">
+      <div class="section-label">Demo</div>
+      <h2>See the gate work</h2>
+      <p class="muted">A model tries to delete a config file. Step through what happens.</p>
+
+      <div class="demo-stage">
+        <div class="demo-header">
+          <span class="demo-title">Governed Session</span>
+          <div class="demo-controls">
+            <span class="demo-step-indicator" id="step-indicator">0 / 5</span>
+            <button id="btn-prev" disabled>&larr; Back</button>
+            <button id="btn-next">Next &rarr;</button>
+          </div>
+        </div>
+        <div class="demo-body">
+          <div class="demo-col">
+            <div class="demo-col-label">What the model wanted</div>
+            <div id="col-wanted"></div>
+          </div>
+          <div class="demo-col">
+            <div class="demo-col-label">What the system did</div>
+            <div id="col-system"></div>
+          </div>
+        </div>
+        <div class="demo-narration" id="narration"></div>
+      </div>
     </section>
 
     <!-- Why -->
@@ -638,5 +822,157 @@
     <p class="closing">Agents propose. Governors verify. Receipts don't lie.</p>
   </footer>
 
+<script>
+(function() {
+  var steps = [
+    {
+      wanted: [
+        { kind: 'propose', label: 'TOOL REQUEST',
+          body: 'bash("rm -rf /etc/app/config.d/")',
+          detail: 'Agent wants to remove config directory to "clean up stale state"' }
+      ],
+      system: [],
+      narration: 'The model proposes a destructive filesystem operation.'
+    },
+    {
+      wanted: [],
+      system: [
+        { kind: 'policy', label: 'POLICY CHECK',
+          body: 'Slot: filesystem.destructive',
+          detail: 'Policy v12 \u00b7 Rule: recursive delete on /etc/** requires explicit claim + evidence' }
+      ],
+      narration: 'Governor intercepts. The tool request hits a policy slot for destructive filesystem operations.'
+    },
+    {
+      wanted: [
+        { kind: 'propose', label: 'CLAIM SUBMITTED',
+          body: 'Claim(type=STALE_STATE, target="/etc/app/config.d/")',
+          detail: 'Agent asserts the directory contains stale configuration' }
+      ],
+      system: [
+        { kind: 'blocked', label: 'EVIDENCE CHECK \u2014 FAILED',
+          body: 'No oracle evidence for staleness',
+          detail: 'Claim is ungrounded. No filesystem probe, no diff, no test output. Typed claim without oracle backing.' }
+      ],
+      narration: 'The model submits a typed claim. Governor checks for evidence. There is none. The claim is ungrounded.'
+    },
+    {
+      wanted: [],
+      system: [
+        { kind: 'blocked', label: 'VERDICT: BLOCKED',
+          body: 'Action denied \u2014 evidence budget exhausted',
+          detail: 'Verdict ceiling enforced. Structural invariant failure caps best possible outcome.' },
+        { kind: 'receipt', label: 'RECEIPT WRITTEN',
+          body: 'rcpt_a7f3e2\u2026 \u00b7 sha256:4d1c8b\u2026',
+          detail: 'Hash-chained \u00b7 content-addressed \u00b7 tamper-evident \u00b7 links to prior receipt rcpt_91bc0f\u2026' }
+      ],
+      narration: 'Blocked. The receipt records exactly what was proposed, what evidence was missing, and which policy fired. Reconstructable.'
+    },
+    {
+      wanted: [
+        { kind: 'propose', label: 'REVISED PROPOSAL',
+          body: 'bash("ls -la /etc/app/config.d/ | head -20")',
+          detail: 'Agent downgrades to a read operation to gather evidence first' }
+      ],
+      system: [
+        { kind: 'allowed', label: 'VERDICT: ALLOWED',
+          body: 'Read operation \u2014 within operating envelope',
+          detail: 'No destructive action. No policy gate. Auto-approved under read-path rules.' },
+        { kind: 'receipt', label: 'RECEIPT WRITTEN',
+          body: 'rcpt_c4e901\u2026 \u00b7 sha256:9a3f71\u2026',
+          detail: 'Allowed action receipted. Chain intact. Evidence now accruing for future claim.' }
+      ],
+      narration: 'The model adapts. It proposes a read instead. Governor allows it. Evidence accrues. The gate shaped behavior without generating text.'
+    }
+  ];
+
+  var current = 0;
+  var colW = document.getElementById('col-wanted');
+  var colS = document.getElementById('col-system');
+  var narr = document.getElementById('narration');
+  var ind = document.getElementById('step-indicator');
+  var btnP = document.getElementById('btn-prev');
+  var btnN = document.getElementById('btn-next');
+
+  function makeEvent(ev) {
+    var el = document.createElement('div');
+    el.className = 'demo-event';
+    el.innerHTML =
+      '<div class="ev-kind ' + ev.kind + '">' + ev.label + '</div>' +
+      '<div class="ev-body">' + ev.body + '</div>' +
+      (ev.detail ? '<div class="ev-detail">' + ev.detail + '</div>' : '');
+    return el;
+  }
+
+  function render() {
+    colW.innerHTML = '';
+    colS.innerHTML = '';
+    narr.textContent = '';
+    ind.textContent = current + ' / ' + steps.length;
+    btnP.disabled = current === 0;
+    btnN.textContent = current === steps.length ? 'Reset' : 'Next \u2192';
+
+    for (var i = 0; i < current; i++) {
+      var s = steps[i];
+      s.wanted.forEach(function(ev) {
+        var el = makeEvent(ev);
+        el.classList.add('visible');
+        colW.appendChild(el);
+      });
+      s.system.forEach(function(ev) {
+        var el = makeEvent(ev);
+        el.classList.add('visible');
+        colS.appendChild(el);
+      });
+    }
+
+    if (current > 0) {
+      narr.textContent = steps[current - 1].narration;
+    }
+
+    // animate the latest step's events
+    if (current > 0) {
+      var latest = steps[current - 1];
+      var allEvents = colW.querySelectorAll('.demo-event');
+      var sysEvents = colS.querySelectorAll('.demo-event');
+      // count how many are from previous steps
+      var prevWanted = 0, prevSystem = 0;
+      for (var j = 0; j < current - 1; j++) {
+        prevWanted += steps[j].wanted.length;
+        prevSystem += steps[j].system.length;
+      }
+      // the new ones are at the end
+      for (var k = prevWanted; k < allEvents.length; k++) {
+        allEvents[k].classList.remove('visible');
+        (function(node, delay) {
+          setTimeout(function() { node.classList.add('visible'); }, delay);
+        })(allEvents[k], (k - prevWanted) * 120);
+      }
+      for (var m = prevSystem; m < sysEvents.length; m++) {
+        sysEvents[m].classList.remove('visible');
+        (function(node, delay) {
+          setTimeout(function() { node.classList.add('visible'); }, delay);
+        })(sysEvents[m], (m - prevSystem) * 120 + 150);
+      }
+    }
+  }
+
+  btnN.addEventListener('click', function() {
+    if (current >= steps.length) {
+      current = 0;
+    } else {
+      current++;
+    }
+    render();
+  });
+
+  btnP.addEventListener('click', function() {
+    if (current > 0) { current--; }
+    render();
+  });
+
+  render();
+})();
+</script>
 </body>
 </html>
